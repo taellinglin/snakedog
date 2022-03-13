@@ -1,7 +1,8 @@
-
 from pygame import mixer
 from pygame import USEREVENT
-class bgm():
+
+
+class bgm:
     def __init__():
         mixer.init()
 
@@ -13,12 +14,12 @@ class bgm():
         mixer.music.set_endevent(loop_event)
         mixer.music.play(start=pattern)
         mixer.music.set_volume(volume)
-            
+
     def update():
         for event in pygame.event.get():
-                if event.type == loop_event:
-                    pygame.mixer.music.play(start=pattern)
+            if event.type == loop_event:
+                pygame.mixer.music.play(start=pattern)
 
-    def set_font(font = None):
+    def set_font(font=None):
         if font != None:
             pass
