@@ -4,7 +4,7 @@ import unittest
 import main
 
 
-def run_suite(module):
+def run_suite(   module):
     suite = unittest.TestLoader().loadTestsFromModule(module)
     unittest.TextTestRunner(verbosity=2).run(suite)
 
