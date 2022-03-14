@@ -16,9 +16,8 @@ soundfx = lasso.load("sfx/", ".wav")  # Stereo WAV
 soundfx3d = lasso.load("sfx3d/", ".wav")  # Mono WAV
 sm = simplemidi
 music = bgm
-selected_track = choice(
-    soundtrack + midifiles + xmfiles
-)  # Change to soundtrackhq for studio quality
+selected_track = choice(soundtrack + midifiles + xmfiles) 
+# Change choice(soundtrack... to choice(soundtrackhq... for studio quality
 # sm.playmidi(choice(midifiles), choice(soundfonts))
 music.playBgm(selected_track, 1)
 pygame.init()
