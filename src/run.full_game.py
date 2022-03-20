@@ -1,5 +1,12 @@
 # run file
 
 import config
+import logging
 
-print("This runs the full game")
+from game import Game
+
+logging.info("Starting the game")
+
+game = Game()
+
+game.main()
