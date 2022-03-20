@@ -1,6 +1,40 @@
-class Game:
+import pygame
+
+import config
+from engine import imageManager
+from util import Singleton
+import scenes
+
+
+class Game(Singleton):
     def __init__(self):
-        pass
+        self.running = False
+        self.screen = pygame.display.set_mode(
+            (config.SCREEN_WIDTH, config.SCREEN_HEIGHT)
+        )
+        
+        # Add many more screens later
+        self.start_screen = scenes.StartScreen(self)
+
+        # set first scene
+        self.scene = self.start_screen
+
+    def main(self):
+        """
+        Blocking entry point for the entire game
+        """
+        self.running = True
+        while self.running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+
+            self.screen.fill((255, 255, 255))
+
+            self.tick()
+
+            self.scene.tick()
+            self.scene.render()
 
     def tick(self):
         pass
@@ -26,16 +60,35 @@ class Grid:
         return self.grid[y][x]
 
 
-class BaseTile:
-    def __init__(self):
-        pass
+class BaseTile(pygame.sprite.Sprite):
+    def __init__(self, image=None):
+        if image:
+            self.image = image
+            self.rect = self.image.get_rect()
+
+    def update(self):
+        raise Exception("BaseTile should be implemented by another class")
 
 
 class TileEntity(BaseTile):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, type, x, y):
+        # Implement loading many other images too
+        super().__init__(imageManager.get_resource(type))
+        self.x, self.y = (x, y)  # where it is in the game engine
+
+        self.render_vx = 0
+        self.render_vy = 0
+
+    def update(self):
+        # make sure to move rendering pos to physical pos gradually
+        # use vx and vy
+        pass
 
 
 class Tile(BaseTile):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, type):
+        super().__init__(imageManager.get_resource(type))
+
+    def update(self):
+        # literally just have to draw
+        pass
