@@ -12,12 +12,14 @@ class Game(Singleton):
         self.screen = pygame.display.set_mode(
             (config.SCREEN_WIDTH, config.SCREEN_HEIGHT)
         )
-        
+
         # Add many more screens later
         self.start_screen = scenes.StartScreen(self)
 
         # set first scene
         self.scene = self.start_screen
+
+        self.clock = pygame.time.Clock()
 
     def main(self):
         """
@@ -27,7 +29,7 @@ class Game(Singleton):
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
+                    self.running = False
 
             self.screen.fill((255, 255, 255))
 
@@ -35,6 +37,10 @@ class Game(Singleton):
 
             self.scene.tick()
             self.scene.render()
+
+            pygame.display.update()
+
+            self.clock.tick(60)
 
     def tick(self):
         pass
