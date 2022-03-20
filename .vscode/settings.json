@@ -1,3 +1,17 @@
 {
-	"python.formatting.provider": "black"
+    "python.formatting.provider": "black",
+    "editor.detectIndentation": false,
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4,
+    "todo-tree.tree.scanMode": "workspace only",
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "**/__pycache__": true,
+        "**/.venv": true,
+    }
 }
