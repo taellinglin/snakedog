@@ -1,8 +1,56 @@
-class Game:
-    def __init__(self):
-        pass
+import pygame
 
-    def tick(self):
+import config
+from engine import imageManager
+from util import Singleton
+import scenes
+
+
+class Scenes(object):
+    pass
+
+
+class Game(Singleton):
+    def __init__(self):
+        self.running = False
+        self.screen = pygame.display.set_mode(
+            (config.SCREEN_WIDTH, config.SCREEN_HEIGHT)
+        )
+
+        self.scenes = Scenes()
+
+        # Add many more screens later
+        self.scenes.start_screen = scenes.StartScreen(self)
+        self.scenes.menu = scenes.Menu(self)
+
+        # set first scene
+        self.scene = self.scenes.start_screen
+
+        self.clock = pygame.time.Clock()
+
+    def main(self):
+        """
+        Blocking entry point for the entire game
+        """
+        self.running = True
+        while self.running:
+            for event in pygame.event.get():
+                if self.event(event):
+                    continue
+                if self.scene.event(event):
+                    continue
+                if event.type == pygame.QUIT:
+                    self.running = False
+
+            self.screen.fill((255, 255, 255))
+
+            self.scene.render()
+
+            pygame.display.update()
+
+            self.clock.tick(60)
+
+    def event(self, event):
         pass
 
 
@@ -26,16 +74,35 @@ class Grid:
         return self.grid[y][x]
 
 
-class BaseTile:
-    def __init__(self):
-        pass
+class BaseTile(pygame.sprite.Sprite):
+    def __init__(self, image=None):
+        if image:
+            self.image = image
+            self.rect = self.image.get_rect()
+
+    def update(self):
+        raise Exception("BaseTile should be implemented by another class")
 
 
 class TileEntity(BaseTile):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, type, x, y):
+        # Implement loading many other images too
+        super().__init__(imageManager.get_resource(type))
+        self.x, self.y = (x, y)  # where it is in the game engine
+
+        self.render_vx = 0
+        self.render_vy = 0
+
+    def update(self):
+        # make sure to move rendering pos to physical pos gradually
+        # use vx and vy
+        pass
 
 
 class Tile(BaseTile):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, type):
+        super().__init__(imageManager.get_resource(type))
+
+    def update(self):
+        # literally just have to draw
+        pass

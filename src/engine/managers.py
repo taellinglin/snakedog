@@ -31,12 +31,3 @@ class ImageManager(ResourceManager):
 class AudioManager(ResourceManager):
     def add_resources(self, name, resource):
         super().add_resource(name, pygame.image.load(self.resolve_path(resource)))
-
-
-# Export
-
-AudioManager()
-ImageManager()
-
-audioManager = AudioManager.instance
-imageManager = ImageManager.instance
