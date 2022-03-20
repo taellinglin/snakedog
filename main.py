@@ -46,9 +46,9 @@ grid = Grid(
     tile_size=(75, 75),
 )
 
-#the main draw function where all other classes are drawn
+# the main draw function where all other classes are drawn
 def draw():
-    #clear the screen
+    # clear the screen
     display.fill((255, 255, 255))
     grid.draw()
 
