@@ -4,12 +4,12 @@ from .scene import BaseScene
 from config import Font
 
 
-class StartScreen(BaseScene):
+class Menu(BaseScene):
     def __init__(self, game):
         super().__init__(game)
         self.font = Font.default
         self.title = self.font.render(
-            "Welcome to the game! Press W to start",
+            "You are in level selection. Press W to go back",
             True,
             (0, 255, 0),
             (255, 0, 0),
@@ -23,4 +23,4 @@ class StartScreen(BaseScene):
     def event(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_w:
-                self.game.scene = self.game.scenes.menu
+                self.game.scene = self.game.scenes.start_screen

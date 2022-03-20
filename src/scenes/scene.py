@@ -5,13 +5,13 @@ class BaseScene(Singleton):
     """
     Base class for scenes to be written.
 
-    Optionally implement `tick()` and `render()` methods.
+    Optionally implement `event()` and `render()` methods.
     """
 
     def __init__(self, game):
         self.game = game
 
-    def tick(self):
+    def event(self):
         pass
 
     def render(self):
