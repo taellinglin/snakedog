@@ -13,7 +13,7 @@ Get the time piece and come back to where u started
 A tile is a small, square piece of land that cannot move. Some tiles can interact with the player
 
 ## Types
-- Non-interactables 
+- Non-interactables
     - Wall
     - Floor (includes one way floors)
     - Piston (Basically a wall or a floor)
@@ -47,6 +47,8 @@ These are enemies that will kill you. Think like a Goomba or Koopa Troopa. Their
 # Grid
 
 The grid contains every information about the tiles and entities. It also handles the movement of the player and interactable tiles
+
+Each tile will be `64x64`
 
 # Movement
 
