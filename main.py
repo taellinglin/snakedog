@@ -10,7 +10,6 @@ from simplemidi import simplemidi
 # import the grid classes
 from grid import Grid, Tile
 
-"""
 soundfonts = lasso.load("sf2/", ".sf2")  # SF2
 midifiles = lasso.load("midi/", ".mid")  # MIDI
 xmfiles = lasso.load("xm/", ".xm")  # XM
@@ -23,8 +22,6 @@ music = bgm
 selected_track = choice(soundtrack + midifiles + xmfiles)
 # Change choice(soundtrack... to choice(soundtrackhq... for studio quality
 # sm.playmidi(choice(midifiles), choice(soundfonts))
-music.playBgm(selected_track, 1)
-"""
 
 
 pygame.init()
@@ -32,6 +29,8 @@ pygame.display.set_caption("Team SnakeDog")
 screen_width = 1920
 screen_height = 1080
 
+#Play BGM
+music.playBgm(selected_track, 1, True)
 
 # img = pygame.image.load("gfx/Rings.png")
 # img = pygame.transform.scale(img, (1920, 1080))
@@ -40,8 +39,8 @@ display = pygame.display.set_mode((screen_width, screen_height))
 
 grid = Grid(
     display,
-    10,
-    10,
+    9,
+    16,
     grid_origin=(screen_width / 6, screen_height / 6),
     tile_size=(75, 75),
 )
