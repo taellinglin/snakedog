@@ -1,4 +1,4 @@
-class SingleTon:
+class Singleton:
     """
     Singleton class
     """
