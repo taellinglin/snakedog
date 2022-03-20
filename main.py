@@ -7,6 +7,10 @@ from lasso import lasso
 from random import choice
 from simplemidi import simplemidi
 
+# import the grid classes
+from grid import Grid,Tile
+
+"""
 soundfonts = lasso.load("sf2/", ".sf2")  # SF2
 midifiles = lasso.load("midi/", ".mid")  # MIDI
 xmfiles = lasso.load("xm/", ".xm")  # XM
@@ -20,18 +24,38 @@ selected_track = choice(soundtrack + midifiles + xmfiles)
 # Change choice(soundtrack... to choice(soundtrackhq... for studio quality
 # sm.playmidi(choice(midifiles), choice(soundfonts))
 music.playBgm(selected_track, 1)
+"""
+
+
 pygame.init()
 pygame.display.set_caption("Team SnakeDog")
-img = pygame.image.load("gfx/Rings.png")
-img = pygame.transform.scale(img, (1920, 1080))
-display = pygame.display.set_mode((1920, 1080))
-display.blit(img, [0, 0])
+screen_width = 1920
+screen_height = 1080
+
+
+
+#img = pygame.image.load("gfx/Rings.png")
+#img = pygame.transform.scale(img, (1920, 1080))
+display = pygame.display.set_mode((screen_width, screen_height))
+#display.blit(img, [0, 0])
+
+grid = Grid(display,10,10,
+            grid_origin = (screen_width/6, screen_height/6),
+            tile_size = (75,75))
+
+
+def draw():
+    display.fill((255,255,255))
+    grid.draw()
+
 
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
+
+    draw()
 
     pygame.display.update()
     pygame.time.Clock().tick(60)
