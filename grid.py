@@ -2,7 +2,7 @@ import pygame
 
 
 class Tile:
-    def __init__(self, column, row, x, y, width, height):
+    def __init__(self, column, row, x, y, width, height, typ=None):
 
         # the parameters that define how the tile is drawn
         self.color = (0, 0, 255)
@@ -13,6 +13,9 @@ class Tile:
 
         # this list will contain all of the objects that are currently on the tile
         self.contents = []
+
+        # supported tile types, None = blank, "wall" = wall, add more also update translatingDict if you add more
+        self.tileType = typ
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect, width=1)
@@ -52,3 +55,12 @@ class Grid:
         for row in range(self.rows):
             for column in range(self.columns):
                 self.tiles[column][row].draw(self.screen)
+
+    def returnGridRepr(self):
+        translatingDict = {None: ".", "wall": "#"}
+        grid = {}                                       # TODO ensure the outer edges of the grid are walls otherwise this will all break
+        for row in range(self.rows):
+            for column in range(self.columns):
+                grid[(column, row)] = translatingDict[self.tiles[column][row].tileType]
+                # takes the newest row adds the char repr of the tiletype
+        return grid
