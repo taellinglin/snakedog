@@ -10,3 +10,5 @@ logging.info("Starting the game")
 game = Game()
 
 game.main()
+
+logging.info("main loop exited")
