@@ -25,7 +25,8 @@ pygame.font.init()
 
 
 class Fonts:
-    default = font.Font("resources/fonts/Daemon_Full_Working.otf", 32)
+    default = font.Font("freesansbold.ttf", 32)
+    # default = font.Font("resources/fonts/Daemon_Full_Working.otf", 32)
 
 
 class Color:
