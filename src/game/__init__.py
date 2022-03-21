@@ -6,8 +6,12 @@ from engine import imageManager
 from engine import music
 from util import Singleton
 import scenes
+
+
 class Scenes(object):
     pass
+
+
 from animations import Bounce, Shake
 
 
@@ -31,19 +35,17 @@ class Game(Singleton):
 
         self.scenes = Scenes()
 
-<<<<<<< HEAD
         # Add many more screens later
         self.scenes.start_screen = scenes.StartScreen(self)
         self.scenes.menu = scenes.Menu(self)
         self.scenes.game_scene = scenes.GameScene(self)
         self.scenes.tutorial = scenes.Tutorial(self, self.screen)
-=======
+
         class Animations(object):
             bounce = Bounce(120, 0, 20)
             shake = Shake(-5, 5)
 
         self.animations = Animations()
->>>>>>> 71101835f5645b8fb55588a0f3800c179c0d85fb
 
         # set first scene
         self.scene = self.scenes.start_screen
