@@ -10,6 +10,9 @@ logging.info("loaded logger from config")
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 800
 
+pygame.init()
+pygame.font.init()
+
 # TODO
 # Fill out these classes
 
