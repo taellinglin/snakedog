@@ -11,7 +11,7 @@ class BaseScene(Singleton):
     def __init__(self, game):
         self.game = game
 
-    def event(self):
+    def event(self, event):
         pass
 
     def render(self):
