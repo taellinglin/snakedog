@@ -1,4 +1,3 @@
-
 import pygame
 
 import config
@@ -7,8 +6,6 @@ from engine import imageManager
 from engine import music
 from util import Singleton
 import scenes
-
-
 class Scenes(object):
     pass
 
@@ -27,6 +24,7 @@ class Game(Singleton):
         self.scenes.start_screen = scenes.StartScreen(self)
         self.scenes.menu = scenes.Menu(self)
         self.scenes.game_scene = scenes.GameScene(self)
+        self.scenes.tutorial = scenes.Tutorial(self, self.screen)
 
         # set first scene
         self.scene = self.scenes.start_screen
