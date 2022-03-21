@@ -6,15 +6,16 @@ from engine import imageManager
 from engine import music
 from util import Singleton
 import scenes
-
-
-class Scenes(object):
-    pass
+from animations import Bounce
 
 
 class Game(Singleton):
     def __init__(self):
         super().__init__()
+
+        # Inject self
+        pygame.game = self
+
         self.running = False
         self.screen = pygame.display.set_mode(
             (config.SCREEN_WIDTH, config.SCREEN_HEIGHT)
@@ -28,10 +29,19 @@ class Game(Singleton):
 
         self.scenes = Scenes()
 
+        class Animations(object):
+            bounce = Bounce(120, 0, 20)
+
+        self.animations = Animations()
+
         # set first scene
         self.scene = self.scenes.start_screen
 
         self.clock = pygame.time.Clock()
+
+    def update_animations(self):
+        # Have to manually enumerate animations and add conditions
+        self.animations.bounce.update()
 
     def main(self):
         """
@@ -48,6 +58,8 @@ class Game(Singleton):
                     self.running = False
 
             self.screen.fill(Color.BACKGROUND)
+
+            self.update_animations()
 
             self.scene.render()
 
