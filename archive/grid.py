@@ -58,7 +58,9 @@ class Grid:
 
     def returnGridRepr(self):
         translatingDict = {None: ".", "wall": "#"}
-        grid = {}                                       # TODO ensure the outer edges of the grid are walls otherwise this will all break
+        grid = (
+            {}
+        )  # TODO ensure the outer edges of the grid are walls otherwise this will all break
         for row in range(self.rows):
             for column in range(self.columns):
                 grid[(column, row)] = translatingDict[self.tiles[column][row].tileType]
