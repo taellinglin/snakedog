@@ -10,7 +10,7 @@ python run.full_game.py
 Here is how to set up venv and install dependencies:
 
 	$ python -m venv .venv
-	$ .venv/bin/activate
+	$ ".venv/bin/script/activate"
 
 It should say (venv) in front of cmd line.
 
