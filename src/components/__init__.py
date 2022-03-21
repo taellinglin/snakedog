@@ -5,15 +5,14 @@ from loaders import imageManager
 class BaseTile(pygame.sprite.Sprite):
     def __init__(self, image=None):
         super().__init__()
+        self.screen = pygame.display.get_surface()
         if image:
             self.image = image
             self.rect = self.image.get_rect()
 
     def update(self):
-        from game import Game
-
         if self.image:
-            Game.instance.screen.blit(self.image, self.rect)
+            self.screen.blit(self.image, self.rect)
 
 
 class TileEntity(BaseTile):
