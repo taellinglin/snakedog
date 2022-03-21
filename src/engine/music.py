@@ -9,6 +9,7 @@ class music:
 
     def playBgm(song=None, volume=1, loop = True):
         mixer.init()
+        print(song)
         mixer.music.load(song)
         pattern = 0
         loop_event = USEREVENT + 1
