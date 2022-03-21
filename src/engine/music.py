@@ -1,3 +1,5 @@
+import logging
+
 import pygame
 from pygame import mixer
 from pygame import USEREVENT
@@ -9,7 +11,7 @@ class music:
 
     def playBgm(song=None, volume=1, loop=True):
         mixer.init()
-        print(song)
+        logging.info(f"Playing BGM {song}")
         mixer.music.load(song)
         pattern = 0
         loop_event = USEREVENT + 1
