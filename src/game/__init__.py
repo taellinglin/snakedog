@@ -7,8 +7,13 @@ from engine import music
 from scenes import tutorial
 from util import Singleton
 import scenes
+from animations import Bounce, Shake
+
 class Scenes(object):
     pass
+
+
+
 
 
 class Game(Singleton):
@@ -38,8 +43,8 @@ class Game(Singleton):
         #self.scenes.game_scene = scenes.GameScene(self)
         #self.scenes.tutorial = scenes.Tutorial(self, self.screen)
         class Animations(object):
-            #bounce = Bounce(120, 0, 20)
-            #shake = Shake(-5, 5)
+            bounce = Bounce(120, 0, 20)
+            shake = Shake(-5, 5)
             pass
 
         self.animations = Animations()
