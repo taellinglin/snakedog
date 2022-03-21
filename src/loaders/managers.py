@@ -15,12 +15,21 @@ class ResourceManager(Singleton):
         super().__init__()
         self.basepath = basepath
         self.resources = {}
+        self.fallbacked = {}
 
     def add_resource(self, name, resource):
         self.resources[name] = resource
 
     def get_resource(self, name):
-        return self.resources.get(name, self.fallback)
+        r = self.resources.get(name, None)
+        if r:
+            return r
+        if not self.fallbacked.get(name, False):
+            logging.debug(
+                f"Resource with name {name} was not found. Falling back to default."
+            )
+            self.fallbacked[name] = True
+        return self.fallback
 
     def resolve_path(self, path):
         return os.path.join("./", self.basepath, path)

@@ -1,18 +1,19 @@
 import pygame
 
 from .scene import BaseScene
-from config import Font
+from config import Fonts
+from config import Color
 
 
 class Menu(BaseScene):
     def __init__(self, game):
         super().__init__(game)
-        self.font = Font.default
+        self.font = Fonts.default
         self.title = self.font.render(
             "You are in level selection. Press W to start",
             True,
-            (0, 255, 0),
-            (255, 0, 0),
+            Color.TEXT_COLOR,
+            Color.TEXT_BACKGROUND,
         )
         self.title_rect = self.title.get_rect()
         self.title_rect.center = self.game.screen.get_rect().center

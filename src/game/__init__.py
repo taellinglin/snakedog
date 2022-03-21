@@ -1,9 +1,13 @@
 import pygame
 
 import config
-from loaders import imageManager
+from config import Color
+from engine import imageManager
+from engine import music
+from scenes import tutorial
 from util import Singleton
 import scenes
+from animations import Bounce, Shake
 
 
 class Scenes(object):
@@ -13,22 +17,46 @@ class Scenes(object):
 class Game(Singleton):
     def __init__(self):
         super().__init__()
+
+        # Inject self
+        pygame.game = self
+
         self.running = False
         self.screen = pygame.display.set_mode(
             (config.SCREEN_WIDTH, config.SCREEN_HEIGHT)
         )
 
+        # Add many more screens later
+        class Scenes(object):
+            start_screen = scenes.StartScreen(self)
+            menu = scenes.Menu(self)
+            game_scene = scenes.GameScene(self)
+            tutorial = scenes.Tutorial(self, self.screen)
+
         self.scenes = Scenes()
 
         # Add many more screens later
-        self.scenes.start_screen = scenes.StartScreen(self)
-        self.scenes.menu = scenes.Menu(self)
-        self.scenes.game_scene = scenes.GameScene(self)
+        # self.scenes.start_screen = scenes.StartScreen(self)
+        # self.scenes.menu = scenes.Menu(self)
+        # self.scenes.game_scene = scenes.GameScene(self)
+        # self.scenes.tutorial = scenes.Tutorial(self, self.screen)
+        class Animations(object):
+            bounce = Bounce(120, 0, 20)
+            shake = Shake(-5, 5)
+            pass
+
+        self.animations = Animations()
 
         # set first scene
         self.scene = self.scenes.start_screen
 
         self.clock = pygame.time.Clock()
+
+    def update_animations(self):
+        # Have to manually enumerate animations and add conditions
+        # self.animations.bounce.update()
+        # self.animations.shake.update()
+        pass
 
     def main(self):
         """
@@ -44,7 +72,9 @@ class Game(Singleton):
                 if event.type == pygame.QUIT:
                     self.running = False
 
-            self.screen.fill((255, 255, 255))
+            self.screen.fill(Color.BACKGROUND)
+
+            self.update_animations()
 
             self.scene.render()
 
