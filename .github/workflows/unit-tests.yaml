@@ -49,4 +49,4 @@ jobs:
           skip_checkout: false
 
       - name: run tests
-        run: python tests/run.py
+        run: python tests
