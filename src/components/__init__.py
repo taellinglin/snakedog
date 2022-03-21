@@ -1,26 +1,28 @@
+import random
+
 import pygame
+
 from loaders import imageManager
 
 
 class BaseTile(pygame.sprite.Sprite):
     def __init__(self, image=None):
         super().__init__()
+        self.screen = pygame.display.get_surface()
         if image:
             self.image = image
             self.rect = self.image.get_rect()
 
-    def update(self):
-        from game import Game
-
+    def update(self, offset=pygame.math.Vector2(0, 0)):
         if self.image:
-            Game.instance.screen.blit(self.image, self.rect)
+            self.screen.blit(self.image, self.rect.topleft + offset)
 
 
 class TileEntity(BaseTile):
     def __init__(self, type, x, y):
         # Implement loading many other images too
         super().__init__(imageManager.get_resource(type))
-        self.x, self.y = (x, y)  # where it is in the game engine
+        self.x, self.y = pygame.math.Vector2(x, y)  # where it is in the game engine
 
         self.render_vx = 0
         self.render_vy = 0
@@ -65,3 +67,11 @@ class Grid(pygame.sprite.Group):
     def get_cell(self, x, y):
         self.check(x, y)
         return self.grid[y][x]
+
+    def update(self, *args, **kwargs):
+        for sprite in sorted(self.sprites(), key=lambda x: x.rect.centery):
+            sprite.update(
+                *args,
+                **kwargs,
+                offset=pygame.Vector2(0, -pygame.game.animations.bounce.value)
+            )
