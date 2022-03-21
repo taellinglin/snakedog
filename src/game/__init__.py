@@ -12,6 +12,7 @@ class Scenes(object):
 
 class Game(Singleton):
     def __init__(self):
+        super().__init__()
         self.running = False
         self.screen = pygame.display.set_mode(
             (config.SCREEN_WIDTH, config.SCREEN_HEIGHT)
