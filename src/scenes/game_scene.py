@@ -16,7 +16,7 @@ class GameScene(BaseScene):
 
     def render(self):
         self.grid.update()
-        
+
     def event(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RETURN:
