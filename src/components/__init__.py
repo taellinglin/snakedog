@@ -73,5 +73,5 @@ class Grid(pygame.sprite.Group):
             sprite.update(
                 *args,
                 **kwargs,
-                offset=pygame.Vector2(0, -pygame.game.animations.bounce.value)
+                #offset=pygame.Vector2(0, -pygame.game.animations.bounce.value)
             )

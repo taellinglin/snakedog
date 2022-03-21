@@ -4,14 +4,11 @@ import config
 from config import Color
 from engine import imageManager
 from engine import music
+from scenes import tutorial
 from util import Singleton
 import scenes
-<<<<<<< HEAD
 class Scenes(object):
     pass
-=======
-from animations import Bounce, Shake
->>>>>>> 71101835f5645b8fb55588a0f3800c179c0d85fb
 
 
 class Game(Singleton):
@@ -31,22 +28,21 @@ class Game(Singleton):
             start_screen = scenes.StartScreen(self)
             menu = scenes.Menu(self)
             game_scene = scenes.GameScene(self)
+            tutorial = scenes.Tutorial(self, self.screen)
 
         self.scenes = Scenes()
 
-<<<<<<< HEAD
         # Add many more screens later
-        self.scenes.start_screen = scenes.StartScreen(self)
-        self.scenes.menu = scenes.Menu(self)
-        self.scenes.game_scene = scenes.GameScene(self)
-        self.scenes.tutorial = scenes.Tutorial(self, self.screen)
-=======
+       #self.scenes.start_screen = scenes.StartScreen(self)
+        #self.scenes.menu = scenes.Menu(self)
+        #self.scenes.game_scene = scenes.GameScene(self)
+        #self.scenes.tutorial = scenes.Tutorial(self, self.screen)
         class Animations(object):
-            bounce = Bounce(120, 0, 20)
-            shake = Shake(-5, 5)
+            #bounce = Bounce(120, 0, 20)
+            #shake = Shake(-5, 5)
+            pass
 
         self.animations = Animations()
->>>>>>> 71101835f5645b8fb55588a0f3800c179c0d85fb
 
         # set first scene
         self.scene = self.scenes.start_screen
@@ -55,8 +51,9 @@ class Game(Singleton):
 
     def update_animations(self):
         # Have to manually enumerate animations and add conditions
-        self.animations.bounce.update()
-        self.animations.shake.update()
+        #self.animations.bounce.update()
+        #self.animations.shake.update()
+        pass
 
     def main(self):
         """
