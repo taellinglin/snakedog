@@ -1,7 +1,7 @@
 import pygame
 
 from .scene import BaseScene
-from config import Font
+from config import Fonts
 from components import Grid, Tile
 
 
