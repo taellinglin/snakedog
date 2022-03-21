@@ -1,12 +1,13 @@
 # setup stuff here
 import os
+
+os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
+
 from engine import music
 import enum
 import logging
 import pygame
 from pygame import font
-
-os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
 
 logging.basicConfig(filename="game.debug.log", level=logging.DEBUG, filemode="w")
 logging.info("loaded logger from config")
