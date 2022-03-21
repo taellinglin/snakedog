@@ -64,3 +64,7 @@ class Grid(pygame.sprite.Group):
     def get_cell(self, x, y):
         self.check(x, y)
         return self.grid[y][x]
+
+    def update(self, *args, **kwargs):
+        for sprite in sorted(self.sprites(), key=lambda x: x.rect.centery):
+            sprite.update(*args, **kwargs)
