@@ -9,7 +9,9 @@ class Map(object):
         # Set up a level to load
         self.currentLevelNumber = 0
         self.levels = []
-        self.levels.append(Level(fileName="resources/maps/test.tmx", tiles=tiles))
+        self.levels.append(
+            Level(fileName="resources/maps/animation-test.tmx", tiles=tiles)
+        )
         self.currentLevel = self.levels[self.currentLevelNumber]
 
         # Create a player object and set the level it is in

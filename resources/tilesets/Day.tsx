@@ -5,6 +5,11 @@
   <objectgroup draworder="index" id="2">
    <object id="1" x="0" y="0" width="64" height="64"/>
   </objectgroup>
+  <animation>
+   <frame tileid="27" duration="500"/>
+   <frame tileid="17" duration="500"/>
+   <frame tileid="7" duration="500"/>
+  </animation>
  </tile>
  <tile id="1">
   <objectgroup draworder="index" id="2">
