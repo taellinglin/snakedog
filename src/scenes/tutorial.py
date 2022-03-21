@@ -6,25 +6,26 @@ from config import Fonts
 from components import Grid, Tile
 from engine.map import Map
 
+
 class Tutorial(BaseScene):
     def __init__(self, game, screen):
         super().__init__(game)
-        #Create gruop of tiles for this layer
+        # Create gruop of tiles for this layer
         self.tiles = pygame.sprite.Group()
-        self.map = Map(self.tiles, pygame.Vector2(64*8, 64*4))
+        self.map = Map(self.tiles, pygame.Vector2(64 * 8, 64 * 4))
         self.screen = screen
-        
+
     def render(self):
         self.map.runLogic()
-        #self.map.processEvents()
+        # self.map.processEvents()
         self.map.draw(self.screen)
         self.map.player.update()
         pass
-        
+
     def event(self, event):
         if event.type == pygame.QUIT:
             return True
-        #Get keyboard input and move player accordingly
+        # Get keyboard input and move player accordingly
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
                 self.map.player.goLeft()
