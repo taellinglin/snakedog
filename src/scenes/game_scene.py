@@ -15,7 +15,4 @@ class GameScene(BaseScene):
                 self.grid.set_cell(i, j, Tile("tile"))
 
     def render(self):
-        for row in self.grid.grid:
-            for tile in row:
-                if tile:
-                    self.game.screen.blit(tile.image, tile.rect)
+        self.grid.update()

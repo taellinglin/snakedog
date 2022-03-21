@@ -10,7 +10,10 @@ class BaseTile(pygame.sprite.Sprite):
             self.rect = self.image.get_rect()
 
     def update(self):
-        raise Exception("BaseTile should be implemented by another class")
+        from game import Game
+
+        if self.image:
+            Game.instance.screen.blit(self.image, self.rect)
 
 
 class TileEntity(BaseTile):
