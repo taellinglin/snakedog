@@ -18,9 +18,8 @@ class StartScreen(BaseScene):
         self.title_rect = self.title.get_rect()
         self.title_rect.center = self.game.screen.get_rect().center
         self.soundtrack = music.music
-        
-        self.soundtrack.playBgm("resources/audio/music/JazzPad2.ogg",1, True)
-        
+
+        self.soundtrack.playBgm("resources/audio/music/JazzPad2.ogg", 1, True)
 
     def render(self):
         self.game.screen.blit(self.title, self.title_rect)
