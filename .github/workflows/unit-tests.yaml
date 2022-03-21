@@ -7,6 +7,9 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v2
 
+      - name: Install these audio stuff
+        run: apt-get install portaudio19-dev python-pyaudio python3-pyaudio
+
       - name: Set head
         run: git remote set-head origin main
 
