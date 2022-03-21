@@ -29,7 +29,7 @@ pygame.display.set_caption("Team SnakeDog")
 screen_width = 1920
 screen_height = 1080
 
-#Play BGM
+# Play BGM
 music.playBgm(selected_track, 1, True)
 
 # img = pygame.image.load("gfx/Rings.png")
