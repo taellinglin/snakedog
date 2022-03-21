@@ -6,12 +6,9 @@ from engine import imageManager
 from engine import music
 from util import Singleton
 import scenes
-<<<<<<< HEAD
 class Scenes(object):
     pass
-=======
 from animations import Bounce, Shake
->>>>>>> 71101835f5645b8fb55588a0f3800c179c0d85fb
 
 
 class Game(Singleton):
