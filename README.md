@@ -1,3 +1,10 @@
+# To run the game
+
+```
+cd src
+python run.full_game.py
+```
+
 # For our new developers in snake dawg
 
 Here is how to set up venv and install dependencies:

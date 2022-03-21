@@ -7,6 +7,9 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v2
 
+      - name: Install these audio stuff
+        run: sudo apt update && sudo apt install portaudio19-dev python-pyaudio python3-pyaudio
+
       - name: Set head
         run: git remote set-head origin main
 
@@ -15,7 +18,13 @@ jobs:
         with:
           python-version: '3.x' # Version range or exact version of a Python version to use, using SemVer's version range syntax
           architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
-        
+
+      - name: Install pipreqs
+        run: pip install pipreqs
+
+      - name: install wheel too (because of pydub)
+        run: pip install wheel
+
       - name: Install dependencies && black
         run: pip install -r requirements.txt && pip install black
       
@@ -32,11 +41,9 @@ jobs:
           skip_fetch: false
           skip_checkout: false
 
-      - name: Install pipreqs
-        run: pip install pipreqs
-      
       - name: Run pipreqs
-        run: pipreqs --debug --force
+        run: pipreqs --debug --force src
+      
         
       - name: Commit pip requirements.txt
         uses: stefanzweifel/git-auto-commit-action@v4
@@ -49,4 +56,4 @@ jobs:
           skip_checkout: false
 
       - name: run tests
-        run: python tests/run.py
+        run: python tests
