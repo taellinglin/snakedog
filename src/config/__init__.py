@@ -30,7 +30,8 @@ MAP_COLLISION_LAYER = 1
 
 
 class Fonts:
-    default = font.Font("resources/fonts/Daemon_Full_Working.otf", 32)
+    # default = font.Font("resources/fonts/Daemon_Full_Working.otf", 32)
+    default = pygame.font.Font("freesansbold.ttf", 32)
 
 
 class Color:
