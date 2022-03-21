@@ -23,10 +23,8 @@ class Tutorial(BaseScene):
         pass
 
     def event(self, event):
-        if event.type == pygame.QUIT:
-            return True
         # Get keyboard input and move player accordingly
-        elif event.type == pygame.KEYDOWN:
+        if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
                 self.map.player.goLeft()
             elif event.key == pygame.K_RIGHT:
