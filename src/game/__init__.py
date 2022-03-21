@@ -1,7 +1,9 @@
 import pygame
 
 import config
-from loaders import imageManager
+from config import Color
+from engine import imageManager
+from engine import music
 from util import Singleton
 import scenes
 
@@ -44,7 +46,7 @@ class Game(Singleton):
                 if event.type == pygame.QUIT:
                     self.running = False
 
-            self.screen.fill((255, 255, 255))
+            self.screen.fill(Color.BACKGROUND)
 
             self.scene.render()
 

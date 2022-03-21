@@ -7,7 +7,7 @@ class bgm:
     def __init__():
         mixer.init()
 
-    def playBgm(song=None, volume=1, loop = True):
+    def playBgm(song=None, volume=1, loop=True):
         mixer.init()
         mixer.music.load(song)
         pattern = 0

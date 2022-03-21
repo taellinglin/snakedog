@@ -7,8 +7,9 @@ class music:
     def __init__():
         mixer.init()
 
-    def playBgm(song=None, volume=1, loop = True):
+    def playBgm(song=None, volume=1, loop=True):
         mixer.init()
+        print(song)
         mixer.music.load(song)
         pattern = 0
         loop_event = USEREVENT + 1
@@ -21,5 +22,6 @@ class music:
                     pygame.mixer.music.play(start=pattern)
                 else:
                     pygame.mixer.music.stop()
+
     def update():
         pass
