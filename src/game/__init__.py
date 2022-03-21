@@ -20,12 +20,13 @@ class Game(Singleton):
             (config.SCREEN_WIDTH, config.SCREEN_HEIGHT)
         )
 
-        self.scenes = Scenes()
-
         # Add many more screens later
-        self.scenes.start_screen = scenes.StartScreen(self)
-        self.scenes.menu = scenes.Menu(self)
-        self.scenes.game_scene = scenes.GameScene(self)
+        class Scenes(object):
+            start_screen = scenes.StartScreen(self)
+            menu = scenes.Menu(self)
+            game_scene = scenes.GameScene(self)
+
+        self.scenes = Scenes()
 
         # set first scene
         self.scene = self.scenes.start_screen
