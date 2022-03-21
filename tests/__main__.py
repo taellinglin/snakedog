@@ -1,7 +1,7 @@
 import unittest
 
 # Importing tests
-import main
+import main_test
 
 
 def run_suite(module):
@@ -9,6 +9,5 @@ def run_suite(module):
     unittest.TextTestRunner(verbosity=2).run(suite)
 
 
-if __name__ == "__main__":
-    for module in [main]:
-        run_suite(module)
+for module in [main_test]:
+    run_suite(module)

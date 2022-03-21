@@ -6,7 +6,7 @@ import logging
 import pygame
 from pygame import font
 
-logging.basicConfig(filename="game.debug.log", level=logging.DEBUG)
+logging.basicConfig(filename="game.debug.log", level=logging.DEBUG, filemode="w")
 logging.info("loaded logger from config")
 
 def hex_to_rgb(value):
