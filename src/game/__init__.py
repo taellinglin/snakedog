@@ -6,7 +6,7 @@ from engine import imageManager
 from engine import music
 from util import Singleton
 import scenes
-from animations import Bounce
+from animations import Bounce, Shake
 
 
 class Game(Singleton):
@@ -31,6 +31,7 @@ class Game(Singleton):
 
         class Animations(object):
             bounce = Bounce(120, 0, 20)
+            shake = Shake(-5, 5)
 
         self.animations = Animations()
 
@@ -42,6 +43,7 @@ class Game(Singleton):
     def update_animations(self):
         # Have to manually enumerate animations and add conditions
         self.animations.bounce.update()
+        self.animations.shake.update()
 
     def main(self):
         """
