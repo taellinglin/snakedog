@@ -10,17 +10,17 @@ class LevelSelect(BaseScene):
         super().__init__(game)
         self.font = Fonts.default
         self.curPos = [0, 0]
-        self.levels = [[1, 2, 3],
-                       [4, 5, 6],
-                       [7, 8, 9]]
+        self.levels = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
         self.levelpos = []
         i, j = 0, 0
         for item in self.levels:  # one level
-            
+
             self.levelpos.append([])
             for level in item:  # 2 level
-    
-                level = self.font.render(str(level), True, Color.TEXT_COLOR, Color.BACKGROUND)
+
+                level = self.font.render(
+                    str(level), True, Color.TEXT_COLOR, Color.BACKGROUND
+                )
                 levelpos = (30 + i * 50, 30 + j * 30)
                 level_rect = level.get_rect()
                 level_rect.center = levelpos
@@ -28,12 +28,14 @@ class LevelSelect(BaseScene):
                 self.game.screen.blit(level, level_rect)
                 j += 1
             i += 1
-            j = 0 
+            j = 0
 
     def adjustpos(self, i, di: int):
         if self.curPos[i] + di < 0:  # checking negative overflow
             self.curPos[i] = len(self.levels if i == 0 else self.levels[i]) - 1
-        elif self.curPos[i] + di == len(self.levels if i == 0 else self.levels[i]):  # checking if pos overflow
+        elif self.curPos[i] + di == len(
+            self.levels if i == 0 else self.levels[i]
+        ):  # checking if pos overflow
             self.curPos[i] = 0
         else:
             self.curPos[i] += di
@@ -41,11 +43,16 @@ class LevelSelect(BaseScene):
     def render(self):
         i, j = 0, 0
         for item in self.levels:  # one level
-            
+
             self.levelpos.append([])
             for level in item:  # 2 level
-    
-                level = self.font.render(str(level), True, Color.TEXT_COLOR, Color.BACKGROUND if not [j, i] == self.curPos else Color.TEXT_BLUE)
+
+                level = self.font.render(
+                    str(level),
+                    True,
+                    Color.TEXT_COLOR,
+                    Color.BACKGROUND if not [j, i] == self.curPos else Color.TEXT_BLUE,
+                )
                 levelpos = (30 + i * 50, 30 + j * 30)
                 level_rect = level.get_rect()
                 level_rect.center = levelpos
@@ -53,14 +60,14 @@ class LevelSelect(BaseScene):
                 self.game.screen.blit(level, level_rect)
                 j += 1
             i += 1
-            j = 0 
+            j = 0
 
     def event(self, event):
         if event.type == pygame.KEYDOWN:
             # 119 W,         97 A,            115 S,           100 D
             # 1073741906 up, 1073741904 left, 1073741905 down, 1073741903 right
             if event.key == 13:  # enter
-                pass 
+                pass
                 #  self.game.scene = self.game.scenes.levels.levelselected
             elif event.key in (119, 1073741906):  # move cur up
                 self.adjustpos(0, -1)
