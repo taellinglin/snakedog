@@ -4,13 +4,25 @@ import os
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
 
 from engine import music
-import enum
 import logging
 import pygame
 from pygame import font
+import sys
 
-logging.basicConfig(filename="game.debug.log", level=logging.DEBUG, filemode="w")
+fmt = "[%(asctime)s] %(filename)s:%(lineno)d %(levelname)s - %(message)s"
+
+logging.basicConfig(
+    filename="game.debug.log", level=logging.DEBUG, filemode="w", format=fmt
+)
 logging.info("loaded logger from config")
+
+root = logging.getLogger()
+
+handler = logging.StreamHandler(sys.stdout)
+handler.setLevel(logging.DEBUG)
+formatter = logging.Formatter(fmt)
+handler.setFormatter(formatter)
+root.addHandler(handler)
 
 
 def hex_to_rgb(value):
