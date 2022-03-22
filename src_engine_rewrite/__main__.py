@@ -285,7 +285,7 @@ class Switch(TileAlignedEntity):
 
 class Door(TileAlignedEntity):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, is_wall=False, **kwargs)
         self.open = False
 
     @property
@@ -533,9 +533,6 @@ def load():
         on_update=on_update,
         images=images.sprites,
     )
-
-    door.pushable = True
-    door.is_wall = False
 
     return [*pbb, door, box2]
 
