@@ -49,7 +49,7 @@ class Game(Singleton):
         self.animations = Animations()
 
         # set first scene
-        self.scene = self.scenes.start_screen
+        self.scene = self.scenes.level_select
 
         self.clock = pygame.time.Clock()
 
