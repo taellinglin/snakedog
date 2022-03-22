@@ -1,4 +1,6 @@
 .vs
+# ignore single letter files
+?.*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
