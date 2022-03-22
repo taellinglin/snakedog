@@ -449,6 +449,7 @@ class World(pygame.sprite.Group):
         return self.tile_at_layer(col, row, self.primary_collision_layer_id) is not None
 
     def reset(self):
+        logging.info("setting up/resetting world")
         self.empty()
         self.actions = {}
         self.flow = 1
