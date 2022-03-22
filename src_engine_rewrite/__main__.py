@@ -219,6 +219,9 @@ class Player(TileAlignedEntity):
                             self.world.reverse_flow()
                             self.inventory.append(entity)
                             entity.kill()
+                        if isinstance(entity, Door):
+                            if not entity.open:
+                                return
                         elif entity.pushable:
                             if entity.push_to((dx, dy)):
                                 self.push_frames = 30
@@ -285,7 +288,7 @@ class Switch(TileAlignedEntity):
 
 class Door(TileAlignedEntity):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, is_wall=False, **kwargs)
+        super().__init__(*args, is_wall=False, pushable=True, **kwargs)
         self.open = False
 
     @property
