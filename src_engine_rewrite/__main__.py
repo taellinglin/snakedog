@@ -75,9 +75,11 @@ class TileAlignedEntity(pygame.sprite.Sprite):
         z=0,
         is_wall=False,
         pushable=False,
+        interactable_during_reverse=False,
     ):
         super().__init__()
         self.z = z
+        self.interactable_during_reverse = interactable_during_reverse
         self.is_wall = is_wall
         self.world = None
         self.pushable = pushable
@@ -194,6 +196,7 @@ class Player(TileAlignedEntity):
         super().__init__(*args, **kwargs)
         self.push_frames = 0
         self.player_dead = False
+        self.inventory = []
 
     def event(self, event):
         actions = []
@@ -205,11 +208,18 @@ class Player(TileAlignedEntity):
                 if not self.world.is_wall(nx, ny):
                     entity = self.world.entity_at(nx, ny)
                     if entity:
-                        if self.world.flow == -1:
+                        if (
+                            self.world.flow == -1
+                            and not entity.interactable_during_reverse
+                        ):
                             return True
                         if entity.is_wall:
                             return
-                        if entity.pushable:
+                        if isinstance(entity, TimePiece):
+                            self.world.reverse_flow()
+                            self.inventory.append(entity)
+                            entity.kill()
+                        elif entity.pushable:
                             if entity.push_to((dx, dy)):
                                 self.push_frames = 30
                                 actions.append(
@@ -289,6 +299,17 @@ class Door(TileAlignedEntity):
 
     def _update_image(self):
         self.image = self.images.door_open if self.open else self.images.door_closed
+
+
+class TimePiece(TileAlignedEntity):
+    pass
+
+
+class ExitDoor(TileAlignedEntity):
+    def __init__(self, *args, **kwargs):
+        super().__init__(
+            *args, is_wall=False, interactable_during_reverse=True, **kwargs
+        )
 
 
 class World(pygame.sprite.Group):
@@ -381,7 +402,10 @@ class World(pygame.sprite.Group):
             self.actions[self.action_index] = reverse_action
 
         # Some game winning condition
-        if False:
+        if self.exit_door and (
+            (self.player.col, self.player.row)
+            == (self.exit_door.col, self.exit_door.row)
+        ):
             logging.info("game won")
             self.gameover = True
             self.won = True
@@ -433,6 +457,7 @@ class World(pygame.sprite.Group):
         self.gameover = False
         self.won = False
 
+        self.exit_door = None
         self.player = None
         self.ghost = None
 
@@ -440,8 +465,8 @@ class World(pygame.sprite.Group):
             entity.world = self
             if isinstance(entity, Player):
                 self.player = entity
-            # if isinstance(entity, Ghost):
-            #     self.ghost = entity
+            if isinstance(entity, ExitDoor):
+                self.exit_door = entity
             self.add(entity)
             entity.post_init()
 
@@ -470,6 +495,7 @@ class World(pygame.sprite.Group):
 
 def load():
     pbb = [
+        ExitDoor(images.sprites.exit, (3, 2)),
         Player(
             images.sprites.player_stick,
             (3, 3),
@@ -487,6 +513,7 @@ def load():
             (5, 6),
             smooth_move_animation=True,
         ),
+        TimePiece(images.sprites.timepiece, (5, 8)),
     ]
 
     door = Door(
