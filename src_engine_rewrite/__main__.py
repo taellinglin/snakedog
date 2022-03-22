@@ -409,9 +409,17 @@ class World(pygame.sprite.Group):
             (self.player.col, self.player.row)
             == (self.exit_door.col, self.exit_door.row)
         ):
-            logging.info("game won")
-            self.gameover = True
-            self.won = True
+            # Check if there are remaining time pieces
+            if len(list(s for s in self.sprites() if isinstance(s, TimePiece))) == 0:
+                logging.info("game won")
+                self.won = True
+                self.gameover = True
+            else:
+                logging.info(
+                    "game lost. Player got to the exit before reaching all time pieces"
+                )
+                self.won = False
+                self.gameover = True
             return
 
         if self.action_index == 0 and self.flow == -1:
