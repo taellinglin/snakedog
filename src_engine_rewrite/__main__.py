@@ -1,6 +1,9 @@
 import pygame
 import pytmx
 import random
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 pygame.init()
 
@@ -164,6 +167,9 @@ class TileAlignedEntity(pygame.sprite.Sprite):
                 # We don't know what this is
                 return False
 
+            if isinstance(potential_pushable, Player):
+                potential_pushable.kill()
+
             if potential_pushable.is_wall:
                 return False
 
@@ -187,32 +193,60 @@ class Player(TileAlignedEntity):
             kwargs["z"] = 999
         super().__init__(*args, **kwargs)
         self.push_frames = 0
+        self.player_dead = False
 
     def event(self, event):
-        dx, dy = keyboard_to_dxdy(event)
-        if dx or dy:
-            nx, ny = self.col + dx, self.row + dy
-            if not self.world.is_wall(nx, ny):
-                entity = self.world.entity_at(nx, ny)
-                if entity:
-                    if entity.is_wall:
-                        return
-                    if entity.pushable:
-                        if entity.push_to((dx, dy)):
-                            self.push_frames = 30
-                        else:
+        actions = []
+
+        def _():
+            dx, dy = keyboard_to_dxdy(event)
+            if dx or dy:
+                nx, ny = self.col + dx, self.row + dy
+                if not self.world.is_wall(nx, ny):
+                    entity = self.world.entity_at(nx, ny)
+                    if entity:
+                        if self.world.flow == -1:
+                            return True
+                        if entity.is_wall:
                             return
-                self.col, self.row = nx, ny
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                # Check collisions from tile
-                tile = self.world.tile_at(self.col, self.row)
-                # Check collisions from entity
-                entities = self.get_collided_sprites()
-                for entity in entities:
-                    if isinstance(entity, Switch):
-                        entity.toggle()
-                pass
+                        if entity.pushable:
+                            if entity.push_to((dx, dy)):
+                                self.push_frames = 30
+                                actions.append(
+                                    lambda: entity.push_to((-dx, -dy), reversed=True)
+                                )
+                            else:
+                                return
+                    self.col, self.row = nx, ny
+                    return True
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    # Check collisions from tile
+                    tile = self.world.tile_at(self.col, self.row)
+                    # Check collisions from entity
+                    entities = self.get_collided_sprites()
+                    for entity in entities:
+                        if isinstance(entity, Switch):
+                            entity.toggle()
+                            return lambda: entity.toggle(reversed=True)
+                if event.key == pygame.K_t:
+                    self.world.reverse_flow()
+
+        val = _()
+
+        if val:
+            if callable(val):
+                actions.append(val)
+            else:
+                actions.append(lambda: None)
+
+        if actions:
+
+            def func():
+                for action in actions:
+                    action()
+
+            self.world.commit_action(func)
 
     def _update_image(self):
         self.push_frames -= 1
@@ -220,6 +254,9 @@ class Player(TileAlignedEntity):
             self.image = self.images.player_stick_push
         else:
             self.image = self.images.player_stick
+
+    def kill_player(self):
+        self.player_dead = True
 
 
 class Switch(TileAlignedEntity):
@@ -256,14 +293,23 @@ class Door(TileAlignedEntity):
 
 class World(pygame.sprite.Group):
     def __init__(
-        self, filename, dimensions, offset=(0, 0), entity_loader_func=None, moves=10
+        self,
+        filename,
+        dimensions,
+        offset=(0, 0),
+        entity_loader_func=None,
+        total_moves=10,
     ):
         super().__init__()
 
-        self.moves = moves
-        self.total_moves = moves
+        self.action_index = 0
+        self.total_moves = total_moves
+        self.moves = 0
         self.gameover = False
         self.flow = 1
+        self.won = False
+
+        self.actions = {}
 
         self.player = None
         self.ghost = None
@@ -306,21 +352,47 @@ class World(pygame.sprite.Group):
     def reverse_flow(self):
         if self.flow == -1:
             raise Exception("Flow already reversed")
+        logging.info("reversing flow of time")
         self.flow = -1
+        self.action_index -= 1
 
     def commit_action(self, reverse_action):
         """
         Removes 1 move from self.moves
 
         Must provide the reverse_action for the action that happened
+
+        This is also when the game checks things like game ended
         """
+        if self.gameover:
+            logging.debug("player tried to move after game over")
+            return
+        if self.moves == self.total_moves:
+            logging.info("game over")
+            self.gameover = True
+            return
+
+        self.moves += 1
+        logging.debug(f"player {self.moves}/{self.total_moves}, {self.action_index}")
+
         if self.flow == -1:
-            self.moves -= 1
+            self.actions.get(self.action_index, lambda: None)()
         else:
-            self.moves -= 1
-            if self.moves == 0:
-                self.gameover = True
-            self.actions[self.moves] = reverse_action
+            self.actions[self.action_index] = reverse_action
+
+        # Some game winning condition
+        if False:
+            logging.info("game won")
+            self.gameover = True
+            self.won = True
+            return
+
+        if self.action_index == 0 and self.flow == -1:
+            logging.info("game lost because player didn't arrive in time")
+            self.gameover = True
+            return
+
+        self.action_index += self.flow
 
     @property
     def offset(self):
@@ -354,8 +426,16 @@ class World(pygame.sprite.Group):
 
     def reset(self):
         self.empty()
+        self.actions = {}
+        self.flow = 1
+        self.moves = 0
+        self.action_index = 0
+        self.gameover = False
+        self.won = False
+
         self.player = None
         self.ghost = None
+
         for entity in self.entity_loader_func():
             entity.world = self
             if isinstance(entity, Player):
@@ -399,7 +479,7 @@ def load():
         ),
         Box(
             images.sprites.test_tile,
-            (5, 4),
+            (3, 4),
             smooth_move_animation=True,
         ),
         Box(
@@ -433,7 +513,10 @@ def load():
 
 
 world = World(
-    "resources/maps/animation-test.tmx", (1000, 1000), entity_loader_func=load, moves=30
+    "resources/maps/animation-test.tmx",
+    (1000, 1000),
+    entity_loader_func=load,
+    total_moves=30,
 )
 
 # # Load TMX data
