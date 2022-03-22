@@ -44,18 +44,6 @@ from img import ImageManager
 images = ImageManager("resources/images")
 
 
-class Sprite(pygame.sprite.Sprite):
-    """
-    Simple Sprite class for on-screen things
-
-    """
-
-    def __init__(self, image):
-        super().__init__()
-        self.image = image
-        self.rect = image.get_rect()
-
-
 def keyboard_to_dxdy(e):
     if e.type != pygame.KEYDOWN:
         return (0, 0)
@@ -76,7 +64,6 @@ class TileAlignedEntity(pygame.sprite.Sprite):
 
     def __init__(
         self,
-        world,
         image,
         position,
         clock_loop=0,
@@ -87,9 +74,8 @@ class TileAlignedEntity(pygame.sprite.Sprite):
     ):
         super().__init__()
         self.z = z
-        self.world = world
         self.is_wall = is_wall
-        world.add(self)
+        self.world = None
         self.image = image
         self.images = images
 
@@ -107,6 +93,7 @@ class TileAlignedEntity(pygame.sprite.Sprite):
 
         self.smooth_move_animation = smooth_move_animation
 
+    def post_init(self):
         self.world._update_sprite_rect(self)
         self.reset_smooth_move_animation()
 
@@ -156,14 +143,14 @@ class TileAlignedEntity(pygame.sprite.Sprite):
     def event(self, event):
         pass
 
-    def push_to(self, col, row=None):
+    def push_to(self, col, row=None, **kwargs):
         if not row:
             col, row = col
         return False
 
 
 class Box(TileAlignedEntity):
-    def push_to(self, direction):
+    def push_to(self, direction, reversed=False):
         potential_wall = self.world.tile_at(
             self.col + direction[0], self.row + direction[1]
         )
@@ -173,7 +160,7 @@ class Box(TileAlignedEntity):
             self.col + direction[0], self.row + direction[1]
         )
         if potential_box:
-            if isinstance(potential_box, TileAlignedEntity):
+            if not isinstance(potential_box, TileAlignedEntity):
                 # We don't know what this is
                 return False
 
@@ -191,6 +178,8 @@ class Box(TileAlignedEntity):
 
 class Player(TileAlignedEntity):
     def __init__(self, *args, **kwargs):
+        if "z" not in kwargs:
+            kwargs["z"] = 999
         super().__init__(*args, **kwargs)
         self.push_frames = 0
 
@@ -234,7 +223,7 @@ class Switch(TileAlignedEntity):
         self.on = on
         self.on_update = on_update
 
-    def toggle(self):
+    def toggle(self, reversed=False):
         self.on = not self.on
         self.on_update(self.on)
 
@@ -261,8 +250,18 @@ class Door(TileAlignedEntity):
 
 
 class World(pygame.sprite.Group):
-    def __init__(self, filename, dimensions, offset=(0, 0), entity_loader_func=None):
+    def __init__(
+        self, filename, dimensions, offset=(0, 0), entity_loader_func=None, moves=10
+    ):
         super().__init__()
+
+        self.moves = moves
+        self.total_moves = moves
+        self.gameover = False
+        self.flow = 1
+
+        self.player = None
+        self.ghost = None
 
         self.tmx_data = pytmx.util_pygame.load_pygame(filename)
         self.map_layer = pyscroll.BufferedRenderer(
@@ -277,8 +276,8 @@ class World(pygame.sprite.Group):
         self.pyscroll_group = pyscroll.PyscrollGroup(self.map_layer)
 
         self.offset = offset
-        entity_loader_func(self)
         self.entity_loader_func = entity_loader_func
+        self.reset()
 
         for id, layer in enumerate(self.tmx_data.layers):
             if "collision" in layer.name:
@@ -298,6 +297,25 @@ class World(pygame.sprite.Group):
             if sprite.col == col and sprite.row == row:
                 return sprite
         return None
+
+    def reverse_flow(self):
+        if self.flow == -1:
+            raise Exception("Flow already reversed")
+        self.flow = -1
+
+    def commit_action(self, reverse_action):
+        """
+        Removes 1 move from self.moves
+
+        Must provide the reverse_action for the action that happened
+        """
+        if self.flow == -1:
+            self.moves -= 1
+        else:
+            self.moves -= 1
+            if self.moves == 0:
+                self.gameover = True
+            self.actions[self.moves] = reverse_action
 
     @property
     def offset(self):
@@ -331,7 +349,16 @@ class World(pygame.sprite.Group):
 
     def reset(self):
         self.empty()
-        self.entity_loader_func(self)
+        self.player = None
+        self.ghost = None
+        for entity in self.entity_loader_func():
+            entity.world = self
+            if isinstance(entity, Player):
+                self.player = entity
+            # if isinstance(entity, Ghost):
+            #     self.ghost = entity
+            self.add(entity)
+            entity.post_init()
 
     def render(self, screen):
         """
@@ -349,50 +376,50 @@ class World(pygame.sprite.Group):
         return screen.blit(self.surface, self.offset)
 
     def event(self, event):
+        if self.gameover:
+            return
         for sprite in self.sprites():
             if isinstance(sprite, TileAlignedEntity):
                 sprite.event(event)
 
 
-def load(world):
-    player = Player(
-        world,
-        images.sprites.player_stick,
-        (3, 3),
-        smooth_move_animation=True,
-        images=images.sprites,
-        z=1,
-    )
+def load():
+    pbb = [
+        Player(
+            images.sprites.player_stick,
+            (3, 3),
+            smooth_move_animation=True,
+            images=images.sprites,
+            z=1,
+        ),
+        Box(
+            images.sprites.test_tile,
+            (5, 4),
+            smooth_move_animation=True,
+        ),
+        Box(
+            images.sprites.number_tile[1],
+            (5, 6),
+            smooth_move_animation=True,
+        ),
+    ]
 
-    box1 = Box(
-        world,
-        images.sprites.test_tile,
-        (5, 4),
-        smooth_move_animation=True,
-    )
-    box2 = Box(
-        world,
-        images.sprites.number_tile[1],
-        (5, 6),
-        smooth_move_animation=True,
-    )
-
-    door = Door(world, images.sprites.door_open, (7, 4), images=images.sprites)
+    door = Door(images.sprites.door_open, (7, 4), images=images.sprites)
 
     def on_update(value):
         door.open = value
 
     box2 = Switch(
-        world,
         images.sprites.switch_on,
         (7, 6),
         on_update=on_update,
         images=images.sprites,
     )
+    return [*pbb, door, box2]
 
 
 world = World(
-    "resources/maps/animation-test.tmx", (1000, 1000), entity_loader_func=load
+    "resources/maps/animation-test.tmx", (1000, 1000), entity_loader_func=load, moves=30
 )
 
 # # Load TMX data
