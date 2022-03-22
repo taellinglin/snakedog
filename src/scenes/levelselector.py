@@ -6,7 +6,6 @@ from config import Color, Fonts
 
 class LevelSelect(BaseScene):
     def __init__(self, game):
-        print(type(game))
         super().__init__(game)
         self.font = Fonts.default
         self.curPos = [0, 0]
