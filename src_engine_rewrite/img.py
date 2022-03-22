@@ -16,7 +16,11 @@ class ResourceManager:
             if isinstance(fallback, str):
                 fallback = loader_func(os.path.join(folder, fallback))
 
-        gen = next(os.walk(folder))
+        gen = None
+        try:
+            gen = next(os.walk(folder))
+        except StopIteration:
+            raise Exception(f"This folder does not exist {folder}")
         folders = gen[1]
         files = gen[2]
 
