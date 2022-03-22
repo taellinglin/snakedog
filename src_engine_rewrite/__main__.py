@@ -71,11 +71,13 @@ class TileAlignedEntity(pygame.sprite.Sprite):
         smooth_move_animation=False,
         z=0,
         is_wall=False,
+        pushable=False,
     ):
         super().__init__()
         self.z = z
         self.is_wall = is_wall
         self.world = None
+        self.pushable = pushable
         self.image = image
         self.images = images
 
@@ -143,37 +145,40 @@ class TileAlignedEntity(pygame.sprite.Sprite):
     def event(self, event):
         pass
 
-    def push_to(self, col, row=None, **kwargs):
+    def push_to(self, col, row=None, reversed=False, **kwargs):
+        if not self.pushable:
+            return False
         if not row:
             col, row = col
-        return False
-
-
-class Box(TileAlignedEntity):
-    def push_to(self, direction, reversed=False):
+        direction = col, row
         potential_wall = self.world.tile_at(
             self.col + direction[0], self.row + direction[1]
         )
         if potential_wall:
             return False
-        potential_box = self.world.entity_at(
+        potential_pushable = self.world.entity_at(
             self.col + direction[0], self.row + direction[1]
         )
-        if potential_box:
-            if not isinstance(potential_box, TileAlignedEntity):
+        if potential_pushable:
+            if not isinstance(potential_pushable, TileAlignedEntity):
                 # We don't know what this is
                 return False
 
-            if potential_box.is_wall:
+            if potential_pushable.is_wall:
                 return False
 
             # push the box too
-            if not potential_box.push_to(direction):
+            if not potential_pushable.push_to(direction):
                 return False
         # There is nothing. Update position
         self.col += direction[0]
         self.row += direction[1]
         return True
+
+
+class Box(TileAlignedEntity):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs, pushable=True)
 
 
 class Player(TileAlignedEntity):
@@ -190,13 +195,13 @@ class Player(TileAlignedEntity):
             if not self.world.is_wall(nx, ny):
                 entity = self.world.entity_at(nx, ny)
                 if entity:
-                    if isinstance(entity, Box):
+                    if entity.is_wall:
+                        return
+                    if entity.pushable:
                         if entity.push_to((dx, dy)):
                             self.push_frames = 30
                         else:
                             return
-                    if entity.is_wall:
-                        return
                 self.col, self.row = nx, ny
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
@@ -404,7 +409,12 @@ def load():
         ),
     ]
 
-    door = Door(images.sprites.door_open, (7, 4), images=images.sprites)
+    door = Door(
+        images.sprites.door_open,
+        (7, 4),
+        images=images.sprites,
+        smooth_move_animation=True,
+    )
 
     def on_update(value):
         door.open = value
@@ -415,6 +425,10 @@ def load():
         on_update=on_update,
         images=images.sprites,
     )
+
+    door.pushable = True
+    door.is_wall = False
+
     return [*pbb, door, box2]
 
 
