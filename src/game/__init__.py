@@ -32,6 +32,7 @@ class Game(Singleton):
             menu = scenes.Menu(self)
             game_scene = scenes.GameScene(self)
             tutorial = scenes.Tutorial(self, self.screen)
+            level_select = scenes.LevelSelect(self)
 
         self.scenes = Scenes()
 
