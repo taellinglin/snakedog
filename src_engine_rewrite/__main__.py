@@ -6,6 +6,8 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 
 pygame.init()
+pygame.font.init()
+default_font = pygame.font.Font("freesansbold.ttf", 32)
 
 screen = pygame.display.set_mode((1000, 1000))
 
@@ -495,6 +497,36 @@ class World(pygame.sprite.Group):
         # render the sprites
         self.update()
 
+        # update ui
+        self.surface.blit(
+            default_font.render(
+                f"Moves {self.moves}/{self.total_moves} Flow of time {self.flow}",
+                True,
+                (0, 0, 0),
+            ),
+            (400, 800),
+        )
+        if self.flow == -1:
+            self.surface.blit(
+                default_font.render(
+                    f" reversing action at move {self.action_index}",
+                    True,
+                    (0, 0, 0),
+                ),
+                (400, 900),
+            )
+        if self.gameover:
+            self.surface.blit(
+                default_font.render(
+                    f"You won. Press R to restart"
+                    if self.won
+                    else "You lost. Press R to restart",
+                    True,
+                    (0, 0, 0),
+                ),
+                (200, 450),
+            )
+
         return screen.blit(self.surface, self.offset)
 
     def event(self, event):
@@ -517,7 +549,7 @@ def load():
         ),
         Box(
             images.sprites.test_tile,
-            (3, 4),
+            (4, 4),
             smooth_move_animation=True,
         ),
         Box(
