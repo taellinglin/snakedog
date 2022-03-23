@@ -13,5 +13,14 @@
         "**/Thumbs.db": true,
         "**/__pycache__": true,
         "**/.venv": true,
+        ".vs": true,
+        ".github": true,
+        "build": true,
+        "dist": true,
+        "tests": true,
+        ".gitignore": true,
+        "requirements.txt": true,
+        "*.debug.log": true,
+        "*.spec": true,
     }
 }
