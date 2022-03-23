@@ -1,14 +1,14 @@
 import pygame
 
 from .scene import BaseScene
-from config import Fonts
+from config import Font
 from config import Color
 
 
 class Menu(BaseScene):
     def __init__(self, game):
         super().__init__(game)
-        self.font = Fonts.default
+        self.font = Font.default
         self.title = self.font.render(
             "You are in level selection. Press W to start",
             True,
@@ -20,8 +20,3 @@ class Menu(BaseScene):
 
     def render(self):
         self.game.screen.blit(self.title, self.title_rect)
-
-    def event(self, event):
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_w:
-                self.game.scene = self.game.scenes.game_scene

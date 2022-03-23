@@ -1,7 +1,4 @@
-from util import Singleton
-
-
-class BaseScene(Singleton):
+class BaseScene:
     """
     Base class for scenes to be written.
 

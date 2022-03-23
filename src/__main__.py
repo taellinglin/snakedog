@@ -1,1 +1,3 @@
-import full_game
+import run
+
+run.main()
