@@ -22,5 +22,6 @@
         "requirements.txt": true,
         "*.debug.log": true,
         "*.spec": true,
+        "README.md": true,
     }
 }
