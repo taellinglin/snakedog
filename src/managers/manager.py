@@ -53,7 +53,9 @@ class ResourceManager:
             if "py" in [m.group(3) for m in matches]:
                 # There is a python file
                 if len(matches) > 2:
-                    raise Exception(f"{folder} -> {key} should only be a pair")
+                    raise Exception(
+                        f'{folder} -> {key} should only be a pair (found multiple files starting with the name "{key}")'
+                    )
 
                 resource_file_list = [m.group(0) for m in matches if m.group(3) != "py"]
                 if not resource_file_list:
@@ -70,14 +72,18 @@ class ResourceManager:
                     # Deal with sprite logic
                     dimensions = datafile.DIMENSIONS
                     if not dimensions:
-                        raise Exception("Sprite must have dimensions")
+                        raise Exception(
+                            "{folder} -> {key}.py: Sprite must have dimensions specified"
+                        )
 
                     width, height = dimensions
 
                     data = datafile.data
 
                     if not data:
-                        raise Exception("A sprite info file must have a class data")
+                        raise Exception(
+                            "{folder} -> {key}.py: A sprite info file must have a class data"
+                        )
 
                     image = loader_func(os.path.join(folder, resource_file))
 
@@ -91,10 +97,14 @@ class ResourceManager:
                             continue
 
                         if not (isinstance(value, list) or isinstance(value, tuple)):
-                            raise Exception(f"{attr} must be a list or tuple")
+                            raise Exception(
+                                f"{folder} -> {key}.py: {attr} must be a list or tuple"
+                            )
 
                         if len(value) < 2:
-                            raise Exception(f"{attr} must have at least 2 elements")
+                            raise Exception(
+                                f"{folder} -> {key}.py: {attr} must have at least 2 elements"
+                            )
                         elif len(value) == 2:
                             # tile at location
                             store.__setattr__(
