@@ -15,7 +15,7 @@ import keyboard
 class UITest(BaseScene):
     def __init__(self, game):
         super().__init__(game)
-        self.button = Button(800, 100, "CONTINUE")
+        self.button = Button(800, 200, "CONTINUE", font=Font.comfortaa)
         self.button.x = 0
         self.button.y = 300
 
@@ -27,4 +27,4 @@ class UITest(BaseScene):
         if keyboard.is_select(event):
             self.button.press()
             self.button.selected = not self.button.selected
-            self.button.text = random.choice(["hi", "test"])
+            self.button.text = random.choice(["hi", "test", "CAP"])
