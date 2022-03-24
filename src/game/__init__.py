@@ -14,9 +14,10 @@ class Game:
         pygame.game = self
 
         self.running = False
-        self.screen = pygame.display.set_mode(
-            (config.SCREEN_WIDTH, config.SCREEN_HEIGHT)
-        )
+
+        # screen has to be loaded first because of some of the
+        # utilities we are using
+        self.screen = config.screen
 
         # Add many more screens later
         class Scenes(object):
@@ -36,7 +37,9 @@ class Game:
         self.animations = Animations()
 
         # set first scene
-        self.scene = self.scenes.uitest
+        self.scene = self.scenes.game_scene
+
+        self.level = 1
 
         self.clock = pygame.time.Clock()
 
@@ -51,6 +54,8 @@ class Game:
         """
         self.running = True
         while self.running:
+            self.fps = self.clock.get_fps()
+
             for event in pygame.event.get():
                 if self.event(event):
                     continue
@@ -65,9 +70,27 @@ class Game:
 
             self.scene.render()
 
+            self.draw_fps()
+
             pygame.display.update()
 
             self.clock.tick(60)
 
+    @property
+    def level(self):
+        return self._level
+
+    @level.setter
+    def level(self, level):
+        self.scenes.game_scene.level = level
+        self._level = level
+
     def event(self, event):
         pass
+
+    def draw_fps(self):
+        fps_text = config.Font.default.render(
+            "FPS: " + str(int(self.fps)), True, Color.TEXT_COLOR, (0, 0, 0, 20)
+        )
+
+        self.screen.blit(fps_text, (0, 0))

@@ -17,7 +17,7 @@ from managers import images
 class Particle(pygame.sprite.Sprite):
     __scale_cache = collections.defaultdict(dict)
 
-    def __init__(self, image, lifetime=60, decrease=True, dxdy=None):
+    def __init__(self, image, col, row, lifetime=60, decrease=True, dxdy=None):
         super().__init__()
         self.z = 1000
         if not dxdy:
@@ -27,6 +27,9 @@ class Particle(pygame.sprite.Sprite):
                 10 * dx * (lifetime - clock) / lifetime,
                 10 * dy * (lifetime - clock) / lifetime,
             )
+        # only used for certain particles
+        self.col, self.row = col, row
+
         self.dxdy = dxdy
         self.image = image
         self.rect = image.get_rect()
@@ -47,8 +50,10 @@ class Particle(pygame.sprite.Sprite):
     def update(self):
         # Rect logic is delt here
         dx, dy = self.dxdy(self.clock)
-        self.rect.x += dx
-        self.rect.y += dy
+
+        self.col += dx / self.world.tile_width
+        self.row += dy / self.world.tile_height
+
         image = None
         if self.decrease:
             image = self.get_scaled(
@@ -211,8 +216,9 @@ class Player(TileAlignedEntity):
         actions = []
 
         def _():
-            dx, dy = keyboard.pygame_event_to_dxdy(event)
-            if dx or dy:
+            dxdy = keyboard.pygame_event_to_dxdy(event)
+            if dxdy:
+                dx, dy = dxdy
                 nx, ny = self.col + dx, self.row + dy
                 if not self.world.is_wall(nx, ny):
                     entity = self.world.tile_entity_at(nx, ny)
@@ -241,9 +247,9 @@ class Player(TileAlignedEntity):
                                 return
                     [
                         self.world.add_particle(
-                            Particle(images.sprites.test_tile), self.col, self.row
+                            Particle(images.sprites.test_tile, self.col, self.row)
                         )
-                        for _ in range(5000)
+                        for _ in range(10)
                     ]
 
                     self.col, self.row = nx, ny
@@ -468,7 +474,9 @@ class World(pygame.sprite.Group):
             sprite.update()
 
         # Draw particles
-        self.particles_group.update()
+        for sprite in self.particles_group.sprites():
+            self._update_sprite_rect(sprite)
+            sprite.update()
 
     def _update_sprite_rect(self, sprite):
         # update their rect
@@ -500,7 +508,9 @@ class World(pygame.sprite.Group):
         self.player = None
         self.ghost = None
 
-        for entity in self.entity_loader_func():
+        data = self.entity_loader_func()
+
+        for entity in data.entities:
             entity.world = self
             if isinstance(entity, Player):
                 self.player = entity
@@ -509,8 +519,12 @@ class World(pygame.sprite.Group):
             self.add(entity)
             entity.post_init()
 
-    def add_particle(self, particle, col, row):
+        for particle in data.particles:
+            self.add_particle(particle, particle.col, particle.row)
+
+    def add_particle(self, particle):
         particle.world = self
+        col, row = particle.col, particle.row
         particle.rect.x, particle.rect.y = self._coord_at(col, row)
 
         self.particles_group.add(particle)
@@ -531,7 +545,7 @@ class World(pygame.sprite.Group):
 
         # update ui
         self.surface.blit(
-            Font.default_font.render(
+            Font.default.render(
                 f"Moves {self.moves}/{self.total_moves} Flow of time {self.flow}",
                 True,
                 (0, 0, 0),
@@ -540,7 +554,7 @@ class World(pygame.sprite.Group):
         )
         if self.flow == -1:
             self.surface.blit(
-                Font.default_font.render(
+                Font.default.render(
                     f" reversing action at move {self.action_index}",
                     True,
                     (0, 0, 0),
@@ -549,7 +563,7 @@ class World(pygame.sprite.Group):
             )
         if self.gameover:
             self.surface.blit(
-                Font.default_font.render(
+                Font.default.render(
                     f"You won. Press R to restart"
                     if self.won
                     else "You lost. Press R to restart",
