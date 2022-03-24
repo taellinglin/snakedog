@@ -3,6 +3,8 @@ import os
 
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
 
+from . import set_logger
+
 import pygame
 from pygame import font
 
@@ -19,8 +21,8 @@ def hex_to_rgb(value):
     return rgb
 
 
-SCREEN_WIDTH = 1920
-SCREEN_HEIGHT = 1080
+SCREEN_WIDTH = 720
+SCREEN_HEIGHT = 560
 
 
 class Font:
