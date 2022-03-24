@@ -20,7 +20,6 @@ def load_module(filepath):
 def splice_image(source_img, width, height, x, y):
     rect = pygame.Rect(0, 0, width, height)
     surf = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
-    print(x, y, width, height)
     surf.blit(source_img, (0, 0), (x, y, x + width, y + height))
     return surf
 
