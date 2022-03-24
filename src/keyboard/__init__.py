@@ -19,6 +19,15 @@ def pygame_event_to_dxdy(e):
     }.get(e.key, None)
 
 
+def is_select(event):
+    """
+    Returns True if the key is select
+    """
+    return event.type == pygame.KEYDOWN and (
+        event.key == pygame.K_RETURN or event.key == pygame.K_SPACE
+    )
+
+
 def is_restart(e):
     """
     Returns True if the key is restart
