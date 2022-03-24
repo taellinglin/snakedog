@@ -25,5 +25,7 @@ class BaseAnimation:
     def start(self):
         self.running = True
 
-    def reset(self):
+    def reset(self, start=False):
         self.clock = 0
+        if start:
+            self.start()
