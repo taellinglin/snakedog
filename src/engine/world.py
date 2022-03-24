@@ -72,6 +72,62 @@ class Particle(pygame.sprite.Sprite):
         pass
 
 
+import collections
+
+
+class Particle(pygame.sprite.Sprite):
+    __scale_cache = collections.defaultdict(dict)
+
+    def __init__(self, image, lifetime=60, decrease=True, dxdy=None):
+        super().__init__()
+        self.z = 1000
+        if not dxdy:
+            theta = random.random() * math.pi * 2
+            dx, dy = math.cos(theta), math.sin(theta)
+            dxdy = lambda clock: (
+                10 * dx * (lifetime - clock) / lifetime,
+                10 * dy * (lifetime - clock) / lifetime,
+            )
+        self.dxdy = dxdy
+        self.image = image
+        self.rect = image.get_rect()
+        self.scale = 1
+        self.decrease = decrease
+        self.lifetime = lifetime
+        self.clock = 0
+
+    def get_scaled(self, scale):
+        if r := self.__scale_cache[self.image].get(scale, None):
+            return r
+        val = self.__scale_cache[self.image][scale] = pygame.transform.scale(
+            self.image,
+            (int(self.image.get_width() * scale), int(self.image.get_height() * scale)),
+        )
+        return val
+
+    def update(self):
+        # Rect logic is delt here
+        dx, dy = self.dxdy(self.clock)
+        self.rect.x += dx
+        self.rect.y += dy
+        image = None
+        if self.decrease:
+            image = self.get_scaled(
+                self.scale * (self.lifetime - self.clock) / self.lifetime
+            )
+        else:
+            image = self.image
+
+        self.world.surface.blit(image, self.rect)
+        self.clock += 1
+
+        if self.clock >= self.lifetime:
+            self.kill()
+
+    def post_init(self):
+        pass
+
+
 class TileAlignedEntity(pygame.sprite.Sprite):
     """
     Does not handle rect logic after initialization
