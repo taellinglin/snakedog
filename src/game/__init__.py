@@ -24,6 +24,7 @@ class Game:
             menu = scenes.Menu(self)
             game_scene = scenes.GameScene(self)
             level_select = scenes.LevelSelect(self)
+            uitest = scenes.UITest(self)
 
         self.scenes = Scenes()
 
@@ -35,7 +36,7 @@ class Game:
         self.animations = Animations()
 
         # set first scene
-        self.scene = self.scenes.level_select
+        self.scene = self.scenes.uitest
 
         self.clock = pygame.time.Clock()
 
