@@ -24,6 +24,8 @@ def hex_to_rgb(value):
 SCREEN_WIDTH = 720
 SCREEN_HEIGHT = 560
 
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
 
 class Font:
     default = pygame.font.Font("resources/fonts/acme.ttf", 32)
