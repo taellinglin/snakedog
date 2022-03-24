@@ -23,5 +23,8 @@
         "*.debug.log": true,
         "*.spec": true,
         "README.md": true,
+    },
+    "files.associations": {
+        "*.tsx": "xml"
     }
 }
