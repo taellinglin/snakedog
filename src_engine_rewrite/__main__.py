@@ -43,6 +43,7 @@ from pytmx.util_pygame import load_pygame
 import pygame
 import pyscroll
 import time
+import math
 
 from img import ImageManager
 
@@ -60,6 +61,62 @@ def keyboard_to_dxdy(e):
             pygame.K_d: (1, 0),
         }
     ).get(e.key, (0, 0))
+
+
+import collections
+
+
+class Particle(pygame.sprite.Sprite):
+    __scale_cache = collections.defaultdict(dict)
+
+    def __init__(self, image, lifetime=60, decrease=True, dxdy=None):
+        super().__init__()
+        self.z = 1000
+        if not dxdy:
+            theta = random.random() * math.pi * 2
+            dx, dy = math.cos(theta), math.sin(theta)
+            dxdy = lambda clock: (
+                10 * dx * (lifetime - clock) / lifetime,
+                10 * dy * (lifetime - clock) / lifetime,
+            )
+        self.dxdy = dxdy
+        self.image = image
+        self.rect = image.get_rect()
+        self.scale = 1
+        self.decrease = decrease
+        self.lifetime = lifetime
+        self.clock = 0
+
+    def get_scaled(self, scale):
+        if r := self.__scale_cache[self.image].get(scale, None):
+            return r
+        val = self.__scale_cache[self.image][scale] = pygame.transform.scale(
+            self.image,
+            (int(self.image.get_width() * scale), int(self.image.get_height() * scale)),
+        )
+        return val
+
+    def update(self):
+        # Rect logic is delt here
+        dx, dy = self.dxdy(self.clock)
+        self.rect.x += dx
+        self.rect.y += dy
+        image = None
+        if self.decrease:
+            image = self.get_scaled(
+                self.scale * (self.lifetime - self.clock) / self.lifetime
+            )
+        else:
+            image = self.image
+
+        self.world.surface.blit(image, self.rect)
+        self.clock += 1
+
+        if self.clock >= self.lifetime:
+            self.kill()
+
+    def post_init(self):
+        pass
 
 
 class TileAlignedEntity(pygame.sprite.Sprite):
@@ -145,7 +202,9 @@ class TileAlignedEntity(pygame.sprite.Sprite):
     def get_collided_sprites(self):
         return [
             e
-            for e in pygame.sprite.spritecollide(self, self.world.sprites(), False)
+            for e in pygame.sprite.spritecollide(
+                self, self.world.tile_entities(), False
+            )
             if e is not self
         ]
 
@@ -163,7 +222,7 @@ class TileAlignedEntity(pygame.sprite.Sprite):
         )
         if potential_wall:
             return False
-        potential_pushable = self.world.entity_at(
+        potential_pushable = self.world.tile_entity_at(
             self.col + direction[0], self.row + direction[1]
         )
         if potential_pushable:
@@ -208,7 +267,7 @@ class Player(TileAlignedEntity):
             if dx or dy:
                 nx, ny = self.col + dx, self.row + dy
                 if not self.world.is_wall(nx, ny):
-                    entity = self.world.entity_at(nx, ny)
+                    entity = self.world.tile_entity_at(nx, ny)
                     if entity:
                         if (
                             self.world.flow == -1
@@ -232,6 +291,13 @@ class Player(TileAlignedEntity):
                                 )
                             else:
                                 return
+                    [
+                        self.world.add_particle(
+                            Particle(images.sprites.test_tile), self.col, self.row
+                        )
+                        for _ in range(5000)
+                    ]
+
                     self.col, self.row = nx, ny
                     return True
             if event.type == pygame.KEYDOWN:
@@ -337,6 +403,8 @@ class World(pygame.sprite.Group):
 
         self.actions = {}
 
+        self.particles_group = pygame.sprite.Group()
+
         self.player = None
         self.ghost = None
 
@@ -369,11 +437,14 @@ class World(pygame.sprite.Group):
     def tile_at_layer(self, col, row, layer):
         return self.tmx_data.get_tile_image(col, row, layer)
 
-    def entity_at(self, col, row):
-        for sprite in self.sprites():
+    def tile_entity_at(self, col, row):
+        for sprite in self.tile_entities():
             if sprite.col == col and sprite.row == row:
                 return sprite
         return None
+
+    def tile_entities(self):
+        return [e for e in self.sprites() if isinstance(e, TileAlignedEntity)]
 
     def reverse_flow(self):
         if self.flow == -1:
@@ -448,12 +519,18 @@ class World(pygame.sprite.Group):
                 self._update_sprite_rect(sprite)
             sprite.update()
 
+        # Draw particles
+        self.particles_group.update()
+
     def _update_sprite_rect(self, sprite):
         # update their rect
-        sprite.rect.x, sprite.rect.y = (
+        sprite.rect.x, sprite.rect.y = self._coord_at(sprite.col, sprite.row)
+
+    def _coord_at(self, col, row):
+        return (
             pygame.Vector2(
-                sprite.col * self.tile_width,
-                sprite.row * self.tile_height,
+                col * self.tile_width,
+                row * self.tile_height,
             )
             + self.offset
         )
@@ -483,6 +560,13 @@ class World(pygame.sprite.Group):
                 self.exit_door = entity
             self.add(entity)
             entity.post_init()
+
+    def add_particle(self, particle, col, row):
+        particle.world = self
+        particle.rect.x, particle.rect.y = self._coord_at(col, row)
+
+        self.particles_group.add(particle)
+        particle.post_init()
 
     def render(self, screen):
         """
