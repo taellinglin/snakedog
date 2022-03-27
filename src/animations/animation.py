@@ -18,6 +18,7 @@ class BaseAnimation:
             self.running = False
             return
         self.value = self.func(self.clock)
+        return self.value
 
     def stop(self):
         self.running = False
@@ -25,5 +26,7 @@ class BaseAnimation:
     def start(self):
         self.running = True
 
-    def reset(self):
+    def reset(self, start=False):
         self.clock = 0
+        if start:
+            self.start()

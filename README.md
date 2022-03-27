@@ -1,45 +1,61 @@
-# To run the game
+# Gnorw Time
 
+A time reversal game conceptualized by nopeless
+
+# How to set up
+
+```sh
+git clone https://github.com/taellinglin/snakedog.git
+cd snakedog
 ```
-cd src
-python run.full_game.py
+On Windows:
+```sh
+play
+```
+On Linux:
+```
+sh play.sh
 ```
 
-# For our new developers in snake dawg
+# How to run the game
 
-Here is how to set up venv and install dependencies:
+Change to the `snakedog` directory
+```sh
+cd snakedog
+```
+then run 
 
-	$ python -m venv .venv
-	$ ".venv/bin/script/activate"
+On Windows:
+```sh
+play
+``` 
+On Linux:
+```
+sh play.sh
+```
+This checks for dependencies before running the game.
 
-It should say (venv) in front of cmd line.
+Alternatively, if set up is complete, run:
+```sh
+python src
+```
 
-	$ pip install -r requirements.txt
+# How to play the game
 
-## Before working on the code, make sure to pull
+Complete the tutorial first by obtaining a time piece and exiting the level via the exit at the top left corner
 
-    $ git pull
+Press Esc to access the menu
 
-## If it errors, do this
+# Credits
 
-    $ git reset origin/HEAD --hard
+> [nopeless](https://github.com/nopeless) Contributed to most of the code, art, and level design
 
-## If the above command errors, please dm in group chat
+> [たっちゃん](https://github.com/ificiana) Contributed to level design and player animation
 
-## To commit all of your changes, do
+> [Dagger](https://github.com/Daggerhound) Contributed to audio/sfx work
 
-    $ git commit --all -m "Your commit message"
+> [Tael](https://github.com/taellinglin) Contributed to audio/sfx
 
-## To go back a commit, do
+> That1Guy Wrote initial level selector
 
-    $ git reset 'HEAD@{1}'
-
-# Before pushing, make sure to lint
-
-    $ python -m black .
-
-## To push your code, do
-
-    $ git push
-
-## If it errors, just leave it like that and wait until Tael or nope is online (fixing this can be quite messy)
+> Misc: hiresh.b, Ducky Wizard

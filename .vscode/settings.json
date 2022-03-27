@@ -4,14 +4,27 @@
     "editor.insertSpaces": true,
     "editor.tabSize": 4,
     "todo-tree.tree.scanMode": "workspace only",
-    "files.exclude": {
-        "**/.git": true,
-        "**/.svn": true,
-        "**/.hg": true,
-        "**/CVS": true,
-        "**/.DS_Store": true,
-        "**/Thumbs.db": true,
-        "**/__pycache__": true,
-        "**/.venv": true,
+    // "files.exclude": {
+    //     "**/.git": true,
+    //     "**/.svn": true,
+    //     "**/.hg": true,
+    //     "**/CVS": true,
+    //     "**/.DS_Store": true,
+    //     "**/Thumbs.db": true,
+    //     "**/__pycache__": true,
+    //     "**/.venv": true,
+    //     ".vs": true,
+    //     ".github": true,
+    //     "build": true,
+    //     "dist": true,
+    //     "tests": true,
+    //     ".gitignore": true,
+    //     "requirements.txt": true,
+    //     "*.debug.log": true,
+    //     "*.spec": true,
+    //     "README.md": true,
+    // },
+    "files.associations": {
+        "*.tsx": "xml"
     }
 }

@@ -1,5 +1,7 @@
 ipython==8.1.1
 pretty_midi==0.2.9
-pyaudio==0.2.11
 pydub==0.25.1
 pygame==2.1.2
+pyscroll==2.29
+pytmx==3.31
+cachetools==5.0.0

@@ -1,2 +1,4 @@
 pygame==2.1.2
+pyscroll==2.29
 pytmx==3.31
+cachetools==5.0.0
